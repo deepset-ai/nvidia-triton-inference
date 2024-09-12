@@ -1,4 +1,4 @@
-name: "multilingual_e5_base"
+name: "onnx_model"
 platform: "onnxruntime_onnx"
 max_batch_size: 512  # Enable batching, adjust as needed
 input [
