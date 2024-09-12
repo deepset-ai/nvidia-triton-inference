@@ -1,0 +1,36 @@
+name: "multilingual_e5_base"
+platform: "onnxruntime_onnx"
+max_batch_size: 512  # Enable batching, adjust as needed
+input [
+{
+    name: "input_ids"
+    data_type: TYPE_INT64
+    dims: [ -1 ]  # Dynamic batch size and sequence length
+},
+{
+    name: "attention_mask"
+    data_type: TYPE_INT64
+    dims: [ -1 ]  # Dynamic batch size and sequence length
+}
+]
+output [
+  {
+      name: "sentence_embedding"
+      data_type: TYPE_FP32
+      dims: [ 768 ]  # Dynamic batch size and embedding size (768 for sentence embeddings)
+  },
+  {
+      name: "token_embeddings"
+      data_type: TYPE_FP32
+      dims: [ -1, 768 ]  # Dynamic batch size, sequence length, and embedding size (token-level embeddings)
+  }
+]
+instance_group [
+  {
+      kind: KIND_GPU  # Use GPU for inference
+      count: 1
+  }
+]
+dynamic_batching {
+  max_queue_delay_microseconds: 100
+}

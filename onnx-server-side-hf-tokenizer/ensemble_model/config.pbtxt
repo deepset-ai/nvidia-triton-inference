@@ -1,0 +1,63 @@
+name: "ensemble_model"
+platform: "ensemble"
+max_batch_size: 0
+
+input [
+  {
+    name: "text"
+    data_type: TYPE_STRING
+    dims: [ -1 ]  # due to max_batch_size results into [-1, 1], there seems no way to make it [-1]
+  }
+]
+output [
+    {
+        name: "sentence_embedding"
+        data_type: TYPE_FP32
+        dims: [ -1, 768 ]  # Dynamic batch size and embedding size (768 for sentence embeddings)
+    },
+    {
+        name: "token_embeddings"
+        data_type: TYPE_FP32
+        dims: [ -1, -1, 768 ]  # Dynamic batch size, sequence length, and embedding size (token-level embeddings)
+    }
+]
+ensemble_scheduling {
+    step [
+        {
+            model_name: "preprocessing"
+            model_version: 1
+            input_map {
+                key: "text"
+                value: "text"
+            }
+            output_map {
+                key: "input_ids"
+                value: "input_ids"
+            }
+            output_map {
+                key: "attention_mask"
+                value: "attention_mask"
+            }
+        },
+        {
+            model_name: "multilingual_e5_base"
+            model_version: 1
+            input_map {
+                key: "input_ids"
+                value: "input_ids"
+            }
+            input_map {
+                key: "attention_mask"
+                value: "attention_mask"
+            }
+            output_map {
+                key: "sentence_embedding"
+                value: "sentence_embedding"
+            }
+            output_map {
+                key: "token_embeddings"
+                value: "token_embeddings"
+            }
+        }
+    ]
+}

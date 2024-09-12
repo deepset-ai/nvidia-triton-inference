@@ -1,0 +1,29 @@
+name: "preprocessing"
+backend: "python"
+max_batch_size: 0
+
+input [
+  {
+    name: "text"
+    data_type: TYPE_STRING
+    dims: [ -1 ]  # due to max_batch_size results into [-1, 1], there seems no way to make it [-1]
+  }
+]
+output [
+    {
+        name: "input_ids"
+        data_type: TYPE_INT64
+        dims: [ -1, -1 ]  # Dynamic batch size and sequence length
+    },
+    {
+        name: "attention_mask"
+        data_type: TYPE_INT64
+        dims: [ -1, -1 ]  # Dynamic batch size and sequence length
+    }
+]
+
+instance_group [
+  {
+    kind: KIND_GPU
+  }
+]
