@@ -19,7 +19,7 @@ class TritonPythonModel:
             
             texts = [text.decode("utf-8") for text in input_tensor.as_numpy().tolist()]
 
-            tokenizer_output = self.tokenizer(texts)
+            tokenizer_output = self.tokenizer(texts, padding=True)
             input_ids = np.array(tokenizer_output["input_ids"])
             attention_mask = np.array(tokenizer_output["attention_mask"])
 
