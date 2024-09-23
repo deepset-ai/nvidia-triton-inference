@@ -11,20 +11,15 @@ input [
 ]
 output [
     {
-        name: "sentence_embedding"
+        name: "embeddings"
         data_type: TYPE_FP32
         dims: [ -1, 768 ]  # Dynamic batch size and embedding size (768 for sentence embeddings)
-    },
-    {
-        name: "token_embeddings"
-        data_type: TYPE_FP32
-        dims: [ -1, -1, 768 ]  # Dynamic batch size, sequence length, and embedding size (token-level embeddings)
     }
 ]
 ensemble_scheduling {
     step [
         {
-            model_name: "preprocessing"
+            model_name: "tokenizer"
             model_version: 1
             input_map {
                 key: "text"
@@ -40,7 +35,7 @@ ensemble_scheduling {
             }
         },
         {
-            model_name: "onnx_model"
+            model_name: "model"
             model_version: 1
             input_map {
                 key: "input_ids"
@@ -52,11 +47,7 @@ ensemble_scheduling {
             }
             output_map {
                 key: "sentence_embedding"
-                value: "sentence_embedding"
-            }
-            output_map {
-                key: "token_embeddings"
-                value: "token_embeddings"
+                value: "embeddings"
             }
         }
     ]

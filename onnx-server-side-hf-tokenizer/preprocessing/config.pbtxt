@@ -1,4 +1,4 @@
-name: "preprocessing"
+name: "tokenizer"
 backend: "python"
 max_batch_size: 0
 
@@ -24,6 +24,7 @@ output [
 
 instance_group [
   {
-    kind: KIND_GPU
+    kind: KIND_CPU
+    count: 8
   }
 ]
