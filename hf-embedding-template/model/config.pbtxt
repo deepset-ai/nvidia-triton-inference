@@ -1,4 +1,4 @@
-name: "onnx_model"
+name: "model"
 platform: "onnxruntime_onnx"
 max_batch_size: 512  # Enable batching, adjust as needed
 input [
