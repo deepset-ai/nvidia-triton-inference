@@ -2,7 +2,7 @@
 FROM nvcr.io/nvidia/tritonserver:24.08-py3
 
 # Copy all files and directories from the host folder to /models in the container
-COPY ./onnx-server-side-hf-tokenizer /models
+COPY ./hf-embedding-template /models
 
 # Install the transformers library
 RUN pip install transformers tritonclient
