@@ -1,7 +1,7 @@
 # nvidia-triton-inference
 This repository contains setup examples for hosting model inference using NVIDIA triton
 
-## How to run
+## How to build a triton embedding image
 
 1. Setup your model and tokenizer files
 
@@ -30,3 +30,7 @@ This repository contains setup examples for hosting model inference using NVIDIA
 
     python client.py
     ```
+
+## helm charts
+
+This repo comes with ready to run helm charts. They can be found under `/helm`. E.g. `text-embedder-trion` is readily configured to run a triton embedding server.

@@ -1,0 +1,133 @@
+fullnameOverride: text-embedder-multilingual-e5-base-triton
+nameOverride: ""
+
+podSecurityContext:
+  fsGroup: 1000
+
+image:
+  repository: deepset/triton-embedding
+  tag: "intfloat-multilingual-e5-base-o4-v1.0.0"
+  pullPolicy: IfNotPresent
+
+# Values used for autoscaling. If autoscaling is not enabled, these are ignored.
+# They should be overriden on a per-model basis based on quality-of-service metrics as well as cost metrics.
+# Example metric to scale on not a suggestion, just an illustration
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 80
+
+# replicaCount is only used when autoscaling is false
+replicaCount: 1
+
+podAnnotations:
+  traffic.sidecar.istio.io/excludeOutboundPorts: "8007"
+
+podLabels: {}
+
+securityContext: {}
+
+# override any environment variables by providing key : value pairs
+# in this dictionary
+envVars: {}
+
+service:
+  type: ClusterIP
+  http_port: 8000
+  grpc_port: null
+  nodePort: null
+  annotations: {}
+
+ingress:
+  enabled: false # ingress, or virtualService - not both
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+metrics:
+  enabled: false
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Automatically mount a ServiceAccount's API credentials?
+  automount: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+# default for GPU deployment without fp8 quantization
+resources:
+  limits:
+    nvidia.com/gpu: 1
+    memory: 12Gi
+    # CPU is used to:
+    #  - export pytorch models to Onnx in parallel
+    #  - fp8 quantization
+    #  - TRT engine compilation
+    #
+    # If quantizing to fp8, set this number to 48000m or higher
+    cpu: "32000m"
+  requests:
+    nvidia.com/gpu: 1
+    memory: 8Gi
+    cpu: "4000m"
+
+logLevel: INFO
+
+startupProbe:
+  httpGet:
+    path: /v2/health/live
+    port: 8000
+  periodSeconds: 10
+  timeoutSeconds: 20
+  initialDelaySeconds: 20
+  failureThreshold: 125
+
+livenessProbe:
+  httpGet:
+    path: /v2/health/live
+    port: 8000
+
+readinessProbe:
+  httpGet:
+    path: /v2/health/ready
+    port: 8000
+
+
+nodeSelector: {}
+
+tolerations:
+  - key: "nvidia.com/gpu"
+    operator: "Exists"
+    effect: "NoSchedule"
+
+affinity: {}
+
+imagePullSecret: {}
+
+imagePullSecrets:
+  regcred: true
+
+# enable for k3d
+# runtimeClassName: nvidia

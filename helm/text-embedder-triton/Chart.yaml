@@ -1,0 +1,8 @@
+apiVersion: v2
+description: A Helm chart for Kubernetes
+maintainers:
+- name: deepset, Inc.
+  url: https://www.deepset.ai/
+name: text-embedding-triton
+type: application
+version: 1.0.0
